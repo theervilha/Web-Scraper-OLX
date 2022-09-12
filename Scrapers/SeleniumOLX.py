@@ -5,6 +5,10 @@ from selenium.webdriver.common.by import By
 
 class SeleniumOLX:
     product = (By.CSS_SELECTOR, ".sc-12rk7z2-2.gSNULD")
+    title_l = (By.CSS_SELECTOR, 'h2')
+    img_l = (By.CSS_SELECTOR, 'img')
+    price_l = (By.CSS_SELECTOR, '.sc-1kn4z61-1.dGMPPn span')
+    date_l = (By.CSS_SELECTOR, '.sc-11h4wdr-0.javKJU')
 
     def __init__(self):
         self.driver = webdriver.Chrome(ChromeDriverManager().install())#, chrome_options=option)
@@ -17,5 +21,24 @@ class SeleniumOLX:
         self.driver.get(url)
     
     def get_products_in_page(self):
-        self.elements = self.driver.find_elements(*self.product)
-        #title = elements[0].find_element(By.CSS_SELECTOR, 'h2').text 
+        elements = self.driver.find_elements(*self.product)
+        for self.element in elements:
+            yield {
+                'title': self.element.find_element(*self.title_l).text,
+                'img': self.element.find_element(*self.img_l).get_attribute('src'),
+                'date': self.get_date(),
+                'price': self.get_price(),
+            }
+
+    def get_price(self):
+        price = self.element.find_element(*self.price_l).text[3:].replace('.', '')
+        return float(price) if price != '' else price
+
+    def get_date(self):
+        self.date = self.element.find_element(*self.date_l).text
+        self.clean_date()
+        return self.date
+
+    def clean_date(self):
+        pass
+
