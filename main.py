@@ -10,4 +10,4 @@ selenium_products = list(SeleniumOLX.get_products_in_page())
 
 
 # Web Scraping with Scrapy
-products = get_products()
+#products = get_products()

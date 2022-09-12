@@ -1,7 +1,10 @@
 from selenium import webdriver
 from webdriver_manager.chrome import ChromeDriverManager
-#from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
+
+from datetime import datetime, timedelta
+import locale
+locale.setlocale(locale.LC_TIME, "pt")
 
 class SeleniumOLX:
     product = (By.CSS_SELECTOR, ".sc-12rk7z2-2.gSNULD")
@@ -40,5 +43,11 @@ class SeleniumOLX:
         return self.date
 
     def clean_date(self):
-        pass
+        if "Hoje" in self.date:
+            self.date = datetime.strptime(datetime.now().strftime('%d %b') + self.date[4:], '%d %b, %H:%M')
+        elif "Ontem" in self.date:
+            yesterday = datetime.now() - timedelta(1)
+            self.date = datetime.strptime(yesterday.strftime('%d %b') + self.date[5:], '%d %b, %H:%M')
+        else:
+            self.date = datetime.strptime(self.date, '%d %b, %H:%M')
 
