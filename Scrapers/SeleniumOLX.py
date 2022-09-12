@@ -7,7 +7,7 @@ import locale
 locale.setlocale(locale.LC_TIME, "pt")
 
 class SeleniumOLX:
-    product = (By.CSS_SELECTOR, ".sc-12rk7z2-2.gSNULD")
+    product = (By.CSS_SELECTOR, ".sc-12rk7z2-1.huFwya")
     title_l = (By.CSS_SELECTOR, 'h2')
     img_l = (By.CSS_SELECTOR, 'img')
     price_l = (By.CSS_SELECTOR, '.sc-1kn4z61-1.dGMPPn span')
@@ -27,6 +27,7 @@ class SeleniumOLX:
         elements = self.driver.find_elements(*self.product)
         for self.element in elements:
             yield {
+                'product_link': self.element.get_attribute('href'),
                 'title': self.element.find_element(*self.title_l).text,
                 'img': self.element.find_element(*self.img_l).get_attribute('src'),
                 'date': self.get_date(),
