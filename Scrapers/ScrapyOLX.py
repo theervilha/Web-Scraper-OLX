@@ -7,7 +7,7 @@ import locale
 locale.setlocale(locale.LC_TIME, "pt")
 
 class MySpider(scrapy.Spider):
-    name = "quotes"
+    name = "products"
     headers= {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:48.0) Gecko/20100101 Firefox/48.0'}
 
     product_l = ".sc-12rk7z2-1.huFwya"
