@@ -14,18 +14,13 @@ class SeleniumOLX:
     date_l = (By.CSS_SELECTOR, '.sc-11h4wdr-0.javKJU')
 
     def __init__(self):
-        self.driver = webdriver.Chrome(ChromeDriverManager().install())#, chrome_options=option)
-    
-    def search_text(self, search_text):
-        url = f'https://rn.olx.com.br/?q={search_text}'
-        self.driver.get(url)
+        self.driver = webdriver.Chrome(ChromeDriverManager().install())
 
     def search_in_url(self, url):
         self.driver.get(url)
     
     def get_products_in_page(self):
-        elements = self.driver.find_elements(*self.product_l)
-        for self.element in elements:
+        for self.element in self.driver.find_elements(*self.product_l):
             yield {
                 'product_link': self.element.get_attribute('href'),
                 'title': self.element.find_element(*self.title_l).text,
