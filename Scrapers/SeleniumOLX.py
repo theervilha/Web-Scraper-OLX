@@ -17,7 +17,22 @@ class SeleniumOLX:
         self.driver = webdriver.Chrome(ChromeDriverManager().install())
 
     def search_in_url(self, url):
-        self.driver.get(url)
+        self.generate_next_five_pages(url)
+        self.products = []
+        for url in self.urls:
+            self.driver.get(url)
+            self.products.extend(list(self.get_products_in_page()))
+        
+        return self.products
+        
+    def generate_next_five_pages(self, url, num_pages=5):
+        start_i = url.find('?')+1
+        if "o=" not in url and start_i != '-1':
+            self.urls = [f'{url[:start_i]}o={i}&{url[start_i:]}' for i in range(1, num_pages+1)]
+        elif "o=" not in url and start_i == '-1':
+            self.urls = [f'{url}?o={i}' for i in range(1, num_pages+1)]
+        elif "o=" in url:
+            self.urls = [re.sub('o=.*?&', f'o={i}&' , url, flags=re.DOTALL) for i in range(1, num_pages+1)]
     
     def get_products_in_page(self):
         for self.element in self.driver.find_elements(*self.product_l):
