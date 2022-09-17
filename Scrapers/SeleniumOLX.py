@@ -16,13 +16,18 @@ class SeleniumOLX:
     def __init__(self):
         self.driver = webdriver.Chrome(ChromeDriverManager().install())
 
-    def search_in_url(self, url):
+    def search_in_url(self, url, **kwargs):
+        self.get_until_this_date = kwargs.get('get_until_this_date')
+
         self.generate_next_five_pages(url)
         self.products = []
         for url in self.urls:
             self.driver.get(url)
-            self.products.extend(list(self.get_products_in_page()))
-        
+            try:
+                self.get_products_in_page()
+            except Exception:
+                return self.products
+
         return self.products
         
     def generate_next_five_pages(self, url, num_pages=5):
@@ -36,22 +41,29 @@ class SeleniumOLX:
     
     def get_products_in_page(self):
         for self.element in self.driver.find_elements(*self.product_l):
-            yield {
+            product_date = self.get_product_date()
+
+            # If passed a limit date to get products, verify.
+            if self.get_until_this_date:
+                if product_date <= self.get_until_this_date:
+                    raise Exception('All products were taken by the deadline.')
+
+            self.products.extend([{
                 'product_link': self.element.get_attribute('href'),
                 'title': self.element.find_element(*self.title_l).text,
                 'img': self.element.find_element(*self.img_l).get_attribute('src'),
-                'price': self.get_price(),
-                'date': self.get_date(),
-            }
+                'price': self.get_product_price(),
+                'date': product_date,
+            }])
 
-    def get_price(self):
-        price = self.element.find_element(*self.price_l).text[3:].replace('.', '')
-        return float(price) if price != '' else price
-
-    def get_date(self):
+    def get_product_date(self):
         self.date = self.element.find_element(*self.date_l).text
         self.clean_date()
         return self.date
+    
+    def get_product_price(self):
+        price = self.element.find_element(*self.price_l).text[3:].replace('.', '')
+        return float(price) if price != '' else price
 
     def clean_date(self):
         if "Hoje" in self.date:

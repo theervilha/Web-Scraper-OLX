@@ -30,7 +30,7 @@ class MySpider(scrapy.Spider):
 
     def get_products_in_page(self, response): 
         for self.element in self.get_products(response):
-            product_date = self.get_date()
+            product_date = self.get_product_date()
 
             # If passed a limit date to get products, verify.
             if self.get_until_this_date:
@@ -42,20 +42,20 @@ class MySpider(scrapy.Spider):
                 'title': self.element.css(self.title_l).get(),
                 'img': self.element.css(self.img_l).get(),
                 'date': product_date,
-                'price': self.get_price(),
+                'price': self.get_product_price(),
             }
     
     def get_products(self, response):
         return response.css(self.product_l)
 
-    def get_price(self):
-        price = self.element.css(self.price_l).get()[3:].replace('.', '')
-        return float(price) if price != '' else price
-
-    def get_date(self):
+    def get_product_date(self):
         self.date = self.element.css(self.date_l).get()
         self.clean_date()
         return self.date
+
+    def get_product_price(self):
+        price = self.element.css(self.price_l).get()[3:].replace('.', '')
+        return float(price) if price != '' else price
 
     def clean_date(self):
         if "Hoje" in self.date:
